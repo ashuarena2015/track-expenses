@@ -1,5 +1,7 @@
 const express = require('express');
 const fs = require('fs');
+const { dbConnect } = require('../dbConnection');
+console.log({dbConnect});
 const routerUsers = express.Router();
 
 routerUsers.get('/', (req, res) => {
@@ -10,6 +12,14 @@ routerUsers.get('/', (req, res) => {
         const usersData = JSON.parse(data);
         res.send(usersData.slice(offset, limit + offset));
     })
+})
+
+routerUsers.get('/insert', async (req, res) => {
+    const db = await dbConnect();
+    const userCollection = db.collection('users');
+    const userInfo = req.params.userInfo;
+    console.log({userInfo});
+    
 })
 
 routerUsers.get('/:id', (req, res) => {

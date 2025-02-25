@@ -6,13 +6,11 @@ import MainRoutes from "./Routes";
 
 const App = () => {
   return (
-    <>
     <div className={styles.container}>
       <BrowserRouter>
         <MainRoutes />
       </BrowserRouter>
     </div>
-    </>
   );
 };
 

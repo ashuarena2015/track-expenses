@@ -7,7 +7,9 @@ const Layout = () => {
     return (
         <>
         <Navigation />
-        <Outlet />
+        <div className="mx-auto" style={{marginTop: "3rem"}}>
+            <Outlet />
+        </div>
         </>
     )
 

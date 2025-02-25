@@ -30,7 +30,6 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-// const fs = require('fs');
 const { routerUsers } = require('./routes/users');
 
 app.use(cors());
