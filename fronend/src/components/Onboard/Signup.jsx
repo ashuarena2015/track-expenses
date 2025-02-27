@@ -1,136 +1,195 @@
 import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import { useDispatch, useSelector } from 'react-redux';
 import FormInput from '../FormsComponent/FormInput';
-import FormSelect from '../FormsComponent/FormSelect';
-import { countries } from '../FormsComponent/Countries';
+import CountryDropDown from '../FormsComponent/CountryDropDown';
+import SimpleSnackbar from '../Layout/Snackbar';
+import { Button } from 'primereact/button';   
+import { Checkbox } from 'primereact/Checkbox';
+
+// Icons
+import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 
 function SignUp() {
-  const [validated, setValidated] = useState(false);
 
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    username: '',
-    city: '',
-    street_address: '',
-    country: ''
-  });
+    const dispatch = useDispatch();
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+    const snackBarMessage = useSelector(state => state.globalReducer);
+    // const { isLoading } = useSelector(state => state.usersReducer);
+    const [formSubmit, setFormSubmit] = useState(false);
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        username: '',
+        city: '',
+        street_address: '',
+        country: ''
+    });
+
+    const handleSubmit = () => {
+        setFormSubmit(true);
+        if(Object.values(formData).some(value => !value)) {
+            return;
+        } 
+        dispatch({
+            type: 'apiRequest',
+            payload: {
+                url: `users/insert`,
+                method: 'POST',
+                onSuccess: 'users/saveUserDetails',
+                onError: 'GLOBAL_MESSAGE',
+                dispatchType: 'saveUserDetails',
+                params: {
+                    userInfo: {...formData}
+                }
+            }
+        });
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        })
     }
 
-    setValidated(true);
-  };
+    const isErrorInput = (inputName) => {
+        return formSubmit && !formData[inputName];
+    }
 
-  const handleChange = (e) => {
-    const { name, value} = e.target;
-    setFormData({
-        ...formData,
-        [name]: value
-    })
-  }
+    console.log({formData});
 
-  console.log({formData});
-
-  return (
-    <div style={{ maxWidth: '600px', margin: 'auto' }}>
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
-        <Row className="mb-3">
-            <Form.Group as={Col} md="6">
-                <FormInput
-                    label="First name"
-                    name="firstName"
-                    value={formData?.firstName}
-                    placeholder="First name"
-                    handleChange={handleChange}
-                />
-            </Form.Group>
-            <Form.Group as={Col} md="6" controlId="validationCustom02">
-                <FormInput
-                    label="Last name"
-                    name="lastName"
-                    value={formData?.lastName}
-                    placeholder="Last name"
-                    handleChange={handleChange}
-                />
-            </Form.Group>
-        </Row>
-        <Row className="mb-3">
-            <Form.Group as={Col}>
-                <FormInput
-                    label="Email"
-                    name="email"
-                    type="email"
-                    value={formData?.email}
-                    placeholder="Email"
-                    handleChange={handleChange}
-                />
-            </Form.Group>
-        </Row>
-        <Row className="mb-4">
-            <Form.Group as={Col} md="6">
-                <FormInput
-                    label="Username"
-                    name="username"
-                    value={formData?.username}
-                    placeholder="Username"
-                    handleChange={handleChange}
-                />
-            </Form.Group>
-            <Form.Group as={Col} md="6">
-                <FormInput
-                    label="Password"
-                    name="password"
-                    type="password"
-                    value={formData?.password}
-                    placeholder="Password"
-                    handleChange={handleChange}
-                />
-            </Form.Group>
-        </Row>
-        <Row className="mb-3">
-            <Form.Group as={Col}>
-                <FormInput
-                    label="Street Address"
-                    name="street_address"
-                    value={formData?.street_address}
-                    placeholder="Street Address"
-                    handleChange={handleChange}
-                />
-            </Form.Group>
-        </Row>
-        <Row className="mb-4">
-            <Form.Group as={Col} md="6">
-                <FormInput
-                    label="City"
-                    name="city"
-                    value={formData?.username}
-                    placeholder="Username"
-                    handleChange={handleChange}
-                />
-            </Form.Group>
-            <Form.Group as={Col} md="6">
-                <FormSelect
-                    label={"Country"}
-                    name="country"
-                    options={countries}
-                    handleChange={handleChange}
-                />
-            </Form.Group>
-        </Row>
-        <Button type="submit">Register</Button>
-        </Form>
-    </div>
-  );
+    return (
+        <>
+            {/* {snackBarMessage?.message && <SimpleSnackbar snackBarInfo={snackBarMessage} />} */}
+            <div className="flex align-items-center">
+                <div className="p-4 shadow-2 border-round">
+                    <div className="text-center mb-5">
+                        <div className="text-900 text-3xl font-medium mb-3">Welcome Back</div>
+                        <span className="text-600 font-medium line-height-3">Don't have an account?</span>
+                        <a className="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Create today!</a>
+                    </div>
+                    <div>
+                        <div className='formgrid grid'>
+                            <div className='field col'>
+                                <label htmlFor="firstName" className="block text-900 font-medium mb-2">First name</label>
+                                <FormInput
+                                    label="First name"
+                                    name="firstName"
+                                    value={formData?.firstName}
+                                    placeholder="First name"
+                                    handleChange={handleChange}
+                                    isError={isErrorInput('firstName')}
+                                    className="w-full mb-3"
+                                />
+                            </div>
+                            <div className='field col'>
+                                <label htmlFor="lastName" className="block text-900 font-medium mb-2">Last name</label>
+                                <FormInput
+                                    label="Last name"
+                                    name="lastName"
+                                    value={formData?.firstName}
+                                    placeholder="Last name"
+                                    handleChange={handleChange}
+                                    isError={isErrorInput('lastName')}
+                                    className="w-full mb-3"
+                                />
+                            </div>
+                        </div>
+                        <div className='formgrid grid'>
+                            <div className='field col'>
+                                <label htmlFor="email" className="block text-900 font-medium mb-2">Email</label>
+                                <FormInput
+                                    label="Email"
+                                    name="email"
+                                    value={formData?.email}
+                                    placeholder="example@domain.com"
+                                    handleChange={handleChange}
+                                    isError={isErrorInput('firstName')}
+                                    className="w-full mb-3"
+                                />
+                            </div>
+                        </div>
+                        <div className='formgrid grid'>
+                            <div className='field col'>
+                                <label htmlFor="username" className="block text-900 font-medium mb-2">Username</label>
+                                <FormInput
+                                    label="Username"
+                                    name="username"
+                                    value={formData?.username}
+                                    placeholder="Username"
+                                    handleChange={handleChange}
+                                    isError={isErrorInput('username')}
+                                    className="w-full mb-3"
+                                />
+                            </div>
+                            <div className='field col'>
+                                <label htmlFor="password" className="block text-900 font-medium mb-2">Password</label>
+                                <FormInput
+                                    label="Password"
+                                    name="password"
+                                    value={formData?.password}
+                                    placeholder="******"
+                                    handleChange={handleChange}
+                                    isError={isErrorInput('password')}
+                                    className="w-full mb-3"
+                                />
+                            </div>
+                        </div>
+                        <div className='formgrid grid'>
+                            <div className='field col'>
+                                <label htmlFor="password" className="block text-900 font-medium mb-2">Street address</label>
+                                <FormInput
+                                    label="Street address"
+                                    name="street_address"
+                                    value={formData?.street_address}
+                                    placeholder="Address..."
+                                    handleChange={handleChange}
+                                    isError={isErrorInput('street_address')}
+                                    className="w-full mb-3"
+                                />
+                            </div>
+                        </div>
+                        <div className='formgrid grid'>
+                            <div className='field col'>
+                                <label htmlFor="city" className="block text-900 font-medium mb-2">City</label>
+                                <FormInput
+                                    label="City"
+                                    name="city"
+                                    value={formData?.city}
+                                    placeholder="City"
+                                    handleChange={handleChange}
+                                    isError={isErrorInput('city')}
+                                    className="w-full mb-3"
+                                />
+                            </div>
+                            <div className='field col'>
+                                <label htmlFor="country" className="block text-900 font-medium mb-2">Country</label>
+                                <CountryDropDown handleChange={handleChange} value={formData?.country} className="w-full mb-3" />
+                            </div>
+                        </div>
+                        <div className="flex align-items-center justify-content-between mb-6">
+                            <div className="flex align-items-center">
+                                <Checkbox id="rememberme" className="mr-2" />
+                                <label htmlFor="rememberme">Remember me</label>
+                            </div>
+                            {/* <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot your password?</a> */}
+                        </div>
+                        <Button
+                            onClick={handleSubmit}
+                            label="Sign Up"
+                            icon="pi pi-user"
+                            className="w-full"
+                        >
+                            <ArrowForwardOutlinedIcon />
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }
 
 export default SignUp;

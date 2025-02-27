@@ -1,10 +1,13 @@
 import React from 'react';
+import Alert from 'react-bootstrap/Alert';
 
 export default function SimpleSnackbar(props) {
 
-    const { snackbarInfo } = props;
+    const { snackBarInfo } = props;
 
     return (   
-       <>{snackbarInfo?.message}</>
+        <Alert key={snackBarInfo?.msgType} variant={snackBarInfo?.msgType === 'error' ? 'danger' : snackBarInfo?.msgType}>
+            {snackBarInfo?.message}
+        </Alert>
     );
 }

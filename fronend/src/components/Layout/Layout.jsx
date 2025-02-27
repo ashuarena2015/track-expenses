@@ -5,12 +5,14 @@ import Navigation from './Navigation';
 const Layout = () => {
 
     return (
-        <>
-        <Navigation />
-        <div className="mx-auto" style={{marginTop: "3rem"}}>
-            <Outlet />
+        <div className="block bg-primary">
+        <div className="grid flex-column">
+            <Navigation />
+            <div className='p-4 m-auto'>
+                <Outlet />
+            </div>
         </div>
-        </>
+        </div>
     )
 
 }

@@ -7,7 +7,9 @@ import {
 // Initial state
 const initialState = {
     users: [],
-    selectedUser: {}
+    selectedUser: {},
+    isLoading: false,
+    expenses: []
 };
 
 // This is another way to call API
@@ -35,6 +37,12 @@ const usersReducer = createSlice({
         },
         getUserDetails: (state, action) => {
             state.selectedUser =  action.payload.user;
+        },
+        isLoading: (state, action) => {
+            state.isLoading = action.payload.loading
+        },
+        getExpenses: (state, action) => {
+            state.expenses =  action.payload.expenses;
         }
     }
 })

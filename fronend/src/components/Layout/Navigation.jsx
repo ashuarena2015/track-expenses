@@ -1,21 +1,31 @@
-import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react'; 
+import { TabMenu } from 'primereact/tabmenu';
+import { useNavigate } from 'react-router-dom';
+import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import CurrencyRupeeOutlinedIcon from '@mui/icons-material/CurrencyRupeeOutlined';
+import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
 
-const Navigation = () => {
+export default function Navigation() {
+
+    const router = useNavigate();
+    const [activeTab, setActiveTab] = useState(0);
+
+    const items = [
+        { label: 'Dashboard', icon: <DashboardCustomizeIcon />, route: '/' },
+        { label: 'Expenses', icon: <CurrencyRupeeOutlinedIcon />, route: '/expenses' },
+        { label: 'Signup', icon: <Person2OutlinedIcon />, route: 'signup' }
+    ];
+
+    const redirectToPage = (tab) => {
+      setActiveTab(tab?.index);
+      router(`${tab?.value?.route}`);
+    }
+
     return (
-        <Navbar bg="dark" data-bs-theme="dark">
-        <Container>
-          <Navbar.Brand href="/">React</Navbar.Brand>
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">Todo</Nav.Link>
-            <Nav.Link as={Link} to="/users">Users</Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar>
+      <TabMenu
+        model={items}
+        activeIndex={activeTab}
+        onTabChange={redirectToPage}
+      />
     )
 }
-
-export default Navigation;

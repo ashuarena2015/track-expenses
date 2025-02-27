@@ -4,9 +4,21 @@ const api = ({ dispatch }) => next => async action => {
         return next(action);
     }
 
+    const isLoading = (status) => {
+        console.log({status});
+        dispatch({
+            type: 'users/isLoading',
+            payload: {
+                loading: status
+            }
+        })
+    }
+
     try {
+
+        isLoading(true);
         const { url, method, params, onSuccess, onError, dispatchType} = action.payload;
-        const response = await axiosInstance.get(url, {
+        const response = await axiosInstance(url, {
             params,
             method,
             onSuccess,
@@ -17,6 +29,21 @@ const api = ({ dispatch }) => next => async action => {
                 type: 'users/getUsers',
                 payload: {
                     users: response?.data
+                }
+            })
+            dispatch({
+                type: 'GLOBAL_MESSAGE',
+                payload: {
+                    message: 'All data fetched successfully!',
+                    msgType: 'success'
+                }
+            })
+        }
+        if(dispatchType === 'getExpenses') {
+            dispatch({
+                type: 'users/getExpenses',
+                payload: {
+                    expenses: response?.data
                 }
             })
             dispatch({
@@ -42,14 +69,26 @@ const api = ({ dispatch }) => next => async action => {
                 }
             })
         }
+        if(dispatchType === 'saveUserDetails') {
+            dispatch({
+                type: 'GLOBAL_MESSAGE',
+                payload: {
+                    message: 'User data saved successfully!',
+                    msgType: 'success'
+                }
+            })
+        }
     } catch (error) {
+        console.log({error});
         dispatch({
             type: 'GLOBAL_MESSAGE',
             payload: {
-                message: error.message,
+                message: error.response?.data?.message || 'Something went wrong!',
                 msgType: 'error'
             }
         })
+    } finally {
+        isLoading(false);
     }
 
 }

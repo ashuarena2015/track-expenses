@@ -7,10 +7,10 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ModalComponent from './Modal';
 
-const Users = () => {
+const Expenses = () => {
 
     const dispatch = useDispatch();
-    const { users, selectedUser } = useSelector(state => state.usersReducer);
+    const { expenses, selectedUser } = useSelector(state => state.usersReducer);
     const { message: globalMessage, msgType } = useSelector(state => state.globalReducer)
 
     const [messageVariant, setMessageVariant] = useState(msgType);
@@ -27,11 +27,11 @@ const Users = () => {
         dispatch({
             type: 'apiRequest',
             payload: {
-                url: `users`,
+                url: `users/expenses`,
                 method: 'GET',
-                onSuccess: 'users/getUsers',
+                onSuccess: 'users/getExpenses',
                 onError: 'GLOBAL_MESSAGE',
-                dispatchType: 'getUsers',
+                dispatchType: 'getExpenses',
                 params: {
                     limit,
                     offset
@@ -46,26 +46,27 @@ const Users = () => {
             payload: {
                 url: `users/${id}`,
                 method: 'GET',
-                onSuccess: 'users/getUserDetails',
+                onSuccess: 'users/getExpense',
                 onError: 'GLOBAL_MESSAGE',
-                dispatchType: 'getUserDetails',
+                dispatchType: 'getExpense',
             }
         });
     }
 
     return (
         <>
-            <h2>Users</h2>
-            <ModalComponent user={selectedUser} displayModal={selectedUser?.id} />
+            <h2>Expenses</h2>
+            <ModalComponent displayModal={false} />
             {globalMessage && showMessage && <Alert onClose={() => setShowMessage(false)} key={messageVariant} dismissible variant={messageVariant}>{globalMessage}</Alert>}
             <ListGroup as="ul">
-                {users?.map((user, index) => {
+                {expenses?.map((expense, index) => {
                     return (
-                        <ListGroup.Item action onClick={() => getUserDetails(user._id)} as="li" key={index} className="d-flex justify-content-between align-items-start">
-                            <Image src={user.image} thumbnail roundedCircle width={50} height={50} />
+                        <ListGroup.Item action onClick={() => getUserDetails(expense._id)} as="li" key={index} className="d-flex justify-content-between align-items-start">
+                            {/* <Image src={user.image} thumbnail roundedCircle width={50} height={50} /> */}
                             <div className="ms-2 me-auto">
-                                <div className="fw-bold">{user.firstName} {user.maidenName} {user.lastName}</div>
-                                {user.email}
+                                <div className="fw-bold">{expense.amount}</div>
+                                {expense.description}<br />
+                                {new Date(expense.date).toLocaleDateString()}
                             </div>
                         </ListGroup.Item>
                     )
@@ -74,10 +75,10 @@ const Users = () => {
             <br />
             <ButtonGroup aria-label="Basic example">
                 <Button disabled={offset === 0} variant="secondary" onClick={() => setOffset(offset - 2)}>Back</Button>
-                <Button disabled={users?.length < limit} variant="secondary" onClick={() => setOffset(offset + 2)}>Next</Button>
+                <Button disabled={expenses?.length < limit} variant="secondary" onClick={() => setOffset(offset + 2)}>Next</Button>
             </ButtonGroup>
         </>
     )
 }
 
-export default Users;
+export default Expenses;

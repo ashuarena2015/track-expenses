@@ -25,7 +25,7 @@ const ModalComponent = (props) => {
         <Modal.Header closeButton>
           <Modal.Title>{user.firstName} {user.maidenName} {user.lastName}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Email: {user.email}</Modal.Body>
+        <Modal.Body></Modal.Body>
       </Modal>
     </>
   );
