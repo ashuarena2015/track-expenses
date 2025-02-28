@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from "react-router-dom";
 import FormInput from '../FormsComponent/FormInput';
 import CountryDropDown from '../FormsComponent/CountryDropDown';
-import SimpleSnackbar from '../Layout/Snackbar';
+// import SimpleSnackbar from '../Layout/Snackbar';
+import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';   
 import { Checkbox } from 'primereact/Checkbox';
 
@@ -12,9 +14,10 @@ import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 function SignUp() {
 
     const dispatch = useDispatch();
+    const router = useNavigate();
 
-    const snackBarMessage = useSelector(state => state.globalReducer);
-    // const { isLoading } = useSelector(state => state.usersReducer);
+    // const snackBarMessage = useSelector(state => state.globalReducer);
+    const { loginUser, isLoading } = useSelector(state => state.usersReducer);
     const [formSubmit, setFormSubmit] = useState(false);
     const [formData, setFormData] = useState({
         firstName: '',
@@ -35,7 +38,7 @@ function SignUp() {
         dispatch({
             type: 'apiRequest',
             payload: {
-                url: `users/insert`,
+                url: `users/register`,
                 method: 'POST',
                 onSuccess: 'users/saveUserDetails',
                 onError: 'GLOBAL_MESSAGE',
@@ -59,7 +62,9 @@ function SignUp() {
         return formSubmit && !formData[inputName];
     }
 
-    console.log({formData});
+    if(loginUser?.username) {
+        return <Navigate to="/expenses" />;
+    }
 
     return (
         <>
@@ -68,8 +73,8 @@ function SignUp() {
                 <div className="p-4 shadow-2 border-round">
                     <div className="text-center mb-5">
                         <div className="text-900 text-3xl font-medium mb-3">Welcome Back</div>
-                        <span className="text-600 font-medium line-height-3">Don't have an account?</span>
-                        <a className="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Create today!</a>
+                        <span className="text-600 font-medium">Already have an account?</span>
+                        <Button label="Login" className="line-height-0 p-0 ml-2" link onClick={() => router('/login')}/>
                     </div>
                     <div>
                         <div className='formgrid grid'>

@@ -8,8 +8,9 @@ import {
 const initialState = {
     users: [],
     selectedUser: {},
-    isLoading: false,
-    expenses: []
+    isLoading: true,
+    expenses: [],
+    loginUser: {}
 };
 
 // This is another way to call API
@@ -43,6 +44,10 @@ const usersReducer = createSlice({
         },
         getExpenses: (state, action) => {
             state.expenses =  action.payload.expenses;
+        },
+        getLoginDetails: (state, action) => {
+            console.log({getLoginDetails: action})
+            state.loginUser = action.payload
         }
     }
 })

@@ -7,8 +7,7 @@ import { countries } from '../FormsComponent/Countries';
 export default function CountryDropDown(props) {
     const { className, value, handleChange } = props;
     const [selectedCountry, setSelectedCountry] = useState(null);
-    
-    console.log({value});
+
     return (
         <div className="card flex justify-content-center">
             <Dropdown

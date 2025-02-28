@@ -5,7 +5,6 @@ const api = ({ dispatch }) => next => async action => {
     }
 
     const isLoading = (status) => {
-        console.log({status});
         dispatch({
             type: 'users/isLoading',
             payload: {
@@ -24,6 +23,21 @@ const api = ({ dispatch }) => next => async action => {
             onSuccess,
             onError
         });
+        if(dispatchType === 'getLoggedInUser') {
+            dispatch({
+                type: 'users/getLoggedInUser',
+                payload: {
+                    users: response?.data
+                }
+            })
+            dispatch({
+                type: 'GLOBAL_MESSAGE',
+                payload: {
+                    message: 'All data fetched successfully!',
+                    msgType: 'success'
+                }
+            })
+        }
         if(dispatchType === 'getUsers') {
             dispatch({
                 type: 'users/getUsers',
@@ -54,26 +68,27 @@ const api = ({ dispatch }) => next => async action => {
                 }
             })
         }
-        if(dispatchType === 'getUserDetails') {
-            dispatch({
-                type: 'users/getUserDetails',
-                payload: {
-                    user: response?.data[0]
-                }
-            })
-            dispatch({
-                type: 'GLOBAL_MESSAGE',
-                payload: {
-                    message: 'User data fetched successfully!',
-                    msgType: 'success'
-                }
-            })
-        }
         if(dispatchType === 'saveUserDetails') {
             dispatch({
                 type: 'GLOBAL_MESSAGE',
                 payload: {
                     message: 'User data saved successfully!',
+                    msgType: 'success'
+                }
+            })
+        }
+        if(dispatchType === 'getLoginDetails') {
+            console.log({response});
+            dispatch({
+                type: 'users/getLoginDetails',
+                payload: {
+                    ...response?.data.user
+                }
+            })
+            dispatch({
+                type: 'GLOBAL_MESSAGE',
+                payload: {
+                    message: 'You are now logged-in!',
                     msgType: 'success'
                 }
             })

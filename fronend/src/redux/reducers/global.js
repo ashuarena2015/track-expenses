@@ -22,7 +22,6 @@ export const globalSnackbarMessage = ({ message, msgType, isReset }) => async (d
 // Reducer
 
 const globalReducer = (state = initialState, action) => {
-    console.log({action});
     switch (action.type) {
         case GLOBAL_MESSAGE:
             return {
