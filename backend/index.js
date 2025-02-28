@@ -31,12 +31,21 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const { routerUsers } = require('./routes/users');
+const cookieParser = require('cookie-parser')
 
-app.use(cors());
+app.use(cors(
+    {
+        origin: "http://localhost:3000", // React frontend URL
+        credentials: true, // Allow cookies
+    }
+));
 
 const port = 3001;
 
-app.use('/api/users', routerUsers);
+app.use(express.json());
+app.use(cookieParser());
+
+app.use('/api/user', routerUsers);
 
 app.listen(port, () => {
     console.log('Listening on 3001');
