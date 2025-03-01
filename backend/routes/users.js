@@ -110,14 +110,13 @@ routerUsers.post('/login', async (req, res) => {
         },
         process.env.SECRET_KEY || "1234!@#%<{*&)",
         {
-            expiresIn: "1h"
+            expiresIn: "24h",
         });
 
         res.cookie("auth", token, {
-            httpOnly: true, // Security: JavaScript can't access it
-            secure: false, // Use true in HTTPS (production)
-            sameSite: "Lax", // Needed for cross-origin requests,
-            expires: new Date(Date.now() + 2629746000)
+            httpOnly: true, // ✅ Prevents client-side access
+            secure: true, // ✅ Use HTTPS in production
+            sameSite: "Strict" // ✅ Prevents CSRF attacks
         });
 
         return res
@@ -140,6 +139,23 @@ routerUsers.get('/expenses', async (req, res) => {
         const userCollection = db.collection('expenses');
         const expenses = await userCollection.find().toArray();
         res.send(expenses);
+    } catch (error) {
+        res.send({error: error?.errmsg});
+    }
+})
+
+routerUsers.post('/add-expense', async (req, res) => {
+    try {
+        const db = await dbConnect();
+        const userCollection = db.collection('expenses');
+
+        const { amount, date, description } = req.query;
+        await userCollection.insertOne({
+            amount: Number(amount), date, description
+        })
+        res.status(200).json({
+            message: 'Add expense successfully!'
+        });
     } catch (error) {
         res.send({error: error?.errmsg});
     }

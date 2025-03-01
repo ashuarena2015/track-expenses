@@ -29,6 +29,15 @@ const initialState = {
 
 // Reducer
 
+const modifyingExpenseInfo = (data) => {
+    for(let k = 0; k < data?.length; k++) {
+        const dateNew = new Date(JSON.parse(data[k].date));
+        data[k].date = dateNew.toLocaleDateString();
+    }
+    return data;
+}
+
+
 const usersReducer = createSlice({
     name: 'users',
     initialState,
@@ -43,7 +52,7 @@ const usersReducer = createSlice({
             state.isLoading = action.payload.loading
         },
         getExpenses: (state, action) => {
-            state.expenses =  action.payload.expenses;
+            state.expenses =  modifyingExpenseInfo(action.payload.expenses);
         },
         getLoginDetails: (state, action) => {
             console.log({getLoginDetails: action})

@@ -47,6 +47,8 @@ import "primereact/resources/themes/lara-light-teal/theme.css"
 // import "primereact/resources/themes/arya-green/theme.css"
 // import "primereact/resources/themes/arya-orange/theme.css"
 // import "primereact/resources/themes/arya-purple/theme.css"
+
+import 'primeicons/primeicons.css';
         
 
 const root = createRoot(document.getElementById("root"));

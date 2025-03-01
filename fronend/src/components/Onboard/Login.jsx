@@ -4,8 +4,6 @@ import { Navigate } from "react-router-dom";
 import FormInput from '../FormsComponent/FormInput';
 // import SimpleSnackbar from '../Layout/Snackbar';
 import { Button } from 'primereact/button';   
-import { Checkbox } from 'primereact/Checkbox';
-
 // Icons
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 

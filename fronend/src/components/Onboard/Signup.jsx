@@ -6,7 +6,7 @@ import CountryDropDown from '../FormsComponent/CountryDropDown';
 // import SimpleSnackbar from '../Layout/Snackbar';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';   
-import { Checkbox } from 'primereact/Checkbox';
+// import { Checkbox } from 'primereact/Checkbox';
 
 // Icons
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';

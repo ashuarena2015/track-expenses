@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ListGroup from 'react-bootstrap/ListGroup';
-import Alert from 'react-bootstrap/Alert';
-import Image from 'react-bootstrap/Image';
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import ModalComponent from './Modal';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import ModalComponent from './AddExpense';
+import { InputText } from 'primereact/inputtext';
+import { Calendar } from 'primereact/calendar';
+import { Button } from 'primereact/button';
 
 const Expenses = () => {
 
     const dispatch = useDispatch();
-    const { expenses, selectedUser } = useSelector(state => state.usersReducer);
+    const { expenses } = useSelector(state => state.usersReducer);
     const { message: globalMessage, msgType } = useSelector(state => state.globalReducer)
 
     const [messageVariant, setMessageVariant] = useState(msgType);
-    const [showMessage, setShowMessage] = useState(true);
 
     const [offset, setOffset] = useState(0);
     const limit = 2;
@@ -27,7 +26,7 @@ const Expenses = () => {
         dispatch({
             type: 'apiRequest',
             payload: {
-                url: `users/expenses`,
+                url: `user/expenses`,
                 method: 'GET',
                 onSuccess: 'users/getExpenses',
                 onError: 'GLOBAL_MESSAGE',
@@ -40,43 +39,80 @@ const Expenses = () => {
         });
     }, [offset]);
 
-    const getUserDetails = (id) => {
-        dispatch({
-            type: 'apiRequest',
-            payload: {
-                url: `users/${id}`,
-                method: 'GET',
-                onSuccess: 'users/getExpense',
-                onError: 'GLOBAL_MESSAGE',
-                dispatchType: 'getExpense',
-            }
-        });
+    const [allExpenses, setAllExpenses] = useState([]);
+
+    const getExpensesInfo = (expenses) => {
+        let allExpensesInfo = [];
+        expenses.map((expense, i) => {
+            allExpensesInfo.push(expense);
+        })
+        return allExpensesInfo;
     }
+
+    useEffect(() => {
+        setAllExpenses(getExpensesInfo(expenses));
+    }, [expenses]);
+
+    const onRowEditComplete = (e) => {
+        console.log(e);
+    };
+
+    const textEditor = (options) => {
+        if(options?.field === 'date') {
+            return <Calendar value={options?.value} onChange={(e) => options.editorCallback(e.target.value)} />
+        }
+        return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
+    };
+
+    const allowEdit = (rowData) => {
+        return rowData.name !== 'Blue Band';
+    };
+
+    const [showForm, setShowForm] = useState(false);
+
+    const showModalForm = () => {
+        setShowForm(true);
+    }
+
+    const headerTemplate = (data) => {
+        if(!data?.length) return;
+        const totalAmount = data.reduce((sum, item) => sum + item.amount, 0);
+        return (
+            <div className="flex align-items-center gap-2">
+                <span className="font-bold">Total amount: {totalAmount}</span>
+            </div>
+        );
+    };
 
     return (
         <>
-            <h2>Expenses</h2>
-            <ModalComponent displayModal={false} />
-            {globalMessage && showMessage && <Alert onClose={() => setShowMessage(false)} key={messageVariant} dismissible variant={messageVariant}>{globalMessage}</Alert>}
-            <ListGroup as="ul">
-                {expenses?.map((expense, index) => {
-                    return (
-                        <ListGroup.Item action onClick={() => getUserDetails(expense._id)} as="li" key={index} className="d-flex justify-content-between align-items-start">
-                            {/* <Image src={user.image} thumbnail roundedCircle width={50} height={50} /> */}
-                            <div className="ms-2 me-auto">
-                                <div className="fw-bold">{expense.amount}</div>
-                                {expense.description}<br />
-                                {new Date(expense.date).toLocaleDateString()}
-                            </div>
-                        </ListGroup.Item>
-                    )
-                })}
-            </ListGroup>
-            <br />
-            <ButtonGroup aria-label="Basic example">
-                <Button disabled={offset === 0} variant="secondary" onClick={() => setOffset(offset - 2)}>Back</Button>
-                <Button disabled={expenses?.length < limit} variant="secondary" onClick={() => setOffset(offset + 2)}>Next</Button>
-            </ButtonGroup>
+            <div className="flex justify-content-between flex-wrap mb-4">
+                <div className="text-2xl align-items-center line-height-4">Expenses</div>
+                <Button onClick={showModalForm} label="Add Expense" icon="pi pi-plus" className="p-button-primary" />
+            </div>
+            <ModalComponent setShowForm={setShowForm} dispatch={dispatch} displayModal={showForm} />
+            <DataTable
+                value={allExpenses}
+                editMode="row"
+                dataKey="id"
+                onRowEditComplete={onRowEditComplete}
+                tableStyle={{ minWidth: '50rem' }}
+                rowGroupMode="subheader"
+                groupRowsBy="representative.name"
+                sortMode="single"
+                sortField="representative.name"
+                sortOrder={1}
+                scrollable
+                scrollHeight="600px"
+                rowGroupHeaderTemplate={headerTemplate(allExpenses)}
+                // rowGroupFooterTemplate={footerTemplate}
+
+            >
+                <Column field="date" header="Date" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
+                <Column field="description" header="Description" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
+                <Column field="amount" header="Amount" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
+                <Column rowEditor={allowEdit} headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+            </DataTable>
         </>
     )
 }
