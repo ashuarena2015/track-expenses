@@ -1,19 +1,21 @@
 import React, { useState } from 'react'; 
 import { TabMenu } from 'primereact/tabmenu';
+import { useSelector  } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
-import CurrencyRupeeOutlinedIcon from '@mui/icons-material/CurrencyRupeeOutlined';
-import Person2OutlinedIcon from '@mui/icons-material/Person2Outlined';
+import { Skeleton } from 'primereact/skeleton';
 
 export default function Navigation() {
 
     const router = useNavigate();
     const [activeTab, setActiveTab] = useState(0);
+    const { loginUser, isLoading } = useSelector(state => state.usersReducer);
+
+    const tabSkeleton = <Skeleton width="5rem" />;
 
     const items = [
-        { label: 'Dashboard', icon: <DashboardCustomizeIcon />, route: '/' },
-        { label: 'Expenses', icon: <CurrencyRupeeOutlinedIcon />, route: '/expenses' },
-        { label: 'Signup', icon: <Person2OutlinedIcon />, route: 'signup' }
+        { label: isLoading ? tabSkeleton : 'Dashboard', icon: 'pi pi-objects-column', route: '/' },
+        { label: isLoading ? tabSkeleton : 'Expenses', icon: 'pi pi-indian-rupee', route: '/expenses' },
+        { label: isLoading ? tabSkeleton : 'Signup', icon: 'pi pi-user', route: 'signup', visible: !isLoading && !loginUser?.username }
     ];
 
     const redirectToPage = (tab) => {

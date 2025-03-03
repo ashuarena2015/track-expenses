@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from "react-router-dom";
 import FormInput from '../FormsComponent/FormInput';
 // import SimpleSnackbar from '../Layout/Snackbar';
-import { Button } from 'primereact/button';   
-// Icons
-import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
+import { Button } from 'primereact/button';
+import { Checkbox } from 'primereact/checkbox';
 
 function Login() {
 
@@ -21,9 +20,9 @@ function Login() {
 
     const handleSubmit = () => {
         setFormSubmit(true);
-        // if(Object.values(formData).some(value => !value)) {
-        //     return;
-        // } 
+        if(Object.values(formData).some(value => !value)) {
+            return;
+        } 
         dispatch({
             type: 'apiRequest',
             payload: {
@@ -106,9 +105,7 @@ function Login() {
                                 label="Sign In"
                                 icon="pi pi-user"
                                 className="w-full"
-                            >
-                                <ArrowForwardOutlinedIcon />
-                            </Button>
+                            />
                         </div>
                     </div>
                 </div>

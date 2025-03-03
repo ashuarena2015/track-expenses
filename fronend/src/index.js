@@ -24,7 +24,7 @@ import App from "./App";
 // import "primereact/resources/themes/lara-light-blue/theme.css"
 // import "primereact/resources/themes/lara-light-indigo/theme.css"
 // import "primereact/resources/themes/lara-light-purple/theme.css"
-import "primereact/resources/themes/lara-light-teal/theme.css"
+// import "primereact/resources/themes/lara-light-teal/theme.css"
 // import "primereact/resources/themes/lara-dark-blue/theme.css"
 // import "primereact/resources/themes/lara-dark-indigo/theme.css"
 // import "primereact/resources/themes/lara-dark-purple/theme.css"
@@ -45,7 +45,7 @@ import "primereact/resources/themes/lara-light-teal/theme.css"
 // import "primereact/resources/themes/vela-purple/theme.css"
 // import "primereact/resources/themes/arya-blue/theme.css"
 // import "primereact/resources/themes/arya-green/theme.css"
-// import "primereact/resources/themes/arya-orange/theme.css"
+import "primereact/resources/themes/arya-orange/theme.css"
 // import "primereact/resources/themes/arya-purple/theme.css"
 
 import 'primeicons/primeicons.css';

@@ -16,9 +16,6 @@ const ProtectedRoute = () => {
     useEffect(() => {
         setIsAccessible(isAuthenticated({...loginUser}))
     }, [isLoading]);
- 
-
-    console.log({loginUser, isLoading, isAccessible})
 
     if(!isLoading && !isAccessible && !loginUser?.username) {
         return <Navigate to="/login" />;

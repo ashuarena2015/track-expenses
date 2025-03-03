@@ -8,9 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';   
 // import { Checkbox } from 'primereact/Checkbox';
 
-// Icons
-import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
-
 function SignUp() {
 
     const dispatch = useDispatch();
@@ -187,9 +184,7 @@ function SignUp() {
                             label="Sign Up"
                             icon="pi pi-user"
                             className="w-full"
-                        >
-                            <ArrowForwardOutlinedIcon />
-                        </Button>
+                        />
                     </div>
                 </div>
             </div>

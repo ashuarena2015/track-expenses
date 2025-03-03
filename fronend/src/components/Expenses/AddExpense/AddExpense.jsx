@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import FormInput from '../../FormsComponent/FormInput';
 import { Calendar } from 'primereact/calendar';
         
 
-const ModalComponent = ({ displayModal, setShowForm, dispatch }) => {
+const ModalComponent = ({ displayModal, setShowForm, dispatch, setFetchExpenseData, loginUser }) => {
+
+    console.log({loginUser});
 
   
-  const [formSubmit, setFormSubmit] = useState(false);
-  const [formData, setFormData] = useState({
+    const [formSubmit, setFormSubmit] = useState(false);
+    const [formData, setFormData] = useState({
           description: '',
           amount: '',
 		  date: ''
       });
 
-      const handleSubmit = () => {
+      const handleSubmit = async () => {
+        console.log({formData});
         setFormSubmit(true);
-        dispatch({
+        const response = await dispatch({
             type: 'apiRequest',
             payload: {
                 url: `user/add-expense`,
@@ -26,10 +29,16 @@ const ModalComponent = ({ displayModal, setShowForm, dispatch }) => {
                 onError: 'GLOBAL_MESSAGE',
                 dispatchType: 'addExpense',
                 params: {
-                    ...formData
+                    ...formData,
+                    userId: loginUser?._id
                 }
             }
         });
+        console.log({response});
+        if(response?.addExpense) {
+            setFetchExpenseData(true);
+            setShowForm(false);
+        }
     };
 
     const isErrorInput = (inputName) => {
@@ -104,4 +113,4 @@ const ModalComponent = ({ displayModal, setShowForm, dispatch }) => {
   );
 }
 
-export default ModalComponent;
+export default memo(ModalComponent);

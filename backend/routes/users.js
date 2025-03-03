@@ -1,11 +1,12 @@
 const express = require('express');
-// const { ObjectId } = require('mongodb');
+const { ObjectId } = require('mongodb');
 const fs = require('fs');
 const { dbConnect } = require('../dbConnection');
 const bcrypt = require("bcrypt");
 const routerUsers = express.Router();
 const jwt = require('jsonwebtoken');
 const { verifyToken } = require('./isAuth');
+const { AddExpense, UpdateExpenseSchema } = require('./schema/addExpense');
 
 routerUsers.get('/', verifyToken, async (req, res) => {
     try {
@@ -136,9 +137,30 @@ routerUsers.post('/login', async (req, res) => {
 routerUsers.get('/expenses', async (req, res) => {
     try {
         const db = await dbConnect();
-        const userCollection = db.collection('expenses');
-        const expenses = await userCollection.find().toArray();
-        res.send(expenses);
+        const expensesCollection = db.collection('expenses');
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+        const skip = (page - 1) * limit;
+
+        // const expenses = await expensesCollection.find().skip(skip).limit(limit).toArray();
+        const expenses = await expensesCollection.aggregate([
+            {
+                $facet: {
+                    totalCount: [{ $count: "count" }],
+                    expenses: [{ $skip: skip }, { $limit: limit }],
+                    totalExpenseAmount: [
+                        {
+                            $group: {
+                                _id: "$category",  // Group by category
+                                amount: { $sum: "$amount" },  // Sum of prices
+                            }
+                        }
+                    ]
+                }
+            }
+        ]).toArray();
+        // res.send(expenses);
+        res.send({ expenses: expenses[0]?.expenses, totalCount: expenses[0]?.totalCount[0].count, totalExpenses: expenses[0]?.totalExpenseAmount[0].amount });
     } catch (error) {
         res.send({error: error?.errmsg});
     }
@@ -147,12 +169,16 @@ routerUsers.get('/expenses', async (req, res) => {
 routerUsers.post('/add-expense', async (req, res) => {
     try {
         const db = await dbConnect();
-        const userCollection = db.collection('expenses');
+        const expensesCollection = db.collection('expenses');
 
-        const { amount, date, description } = req.query;
-        await userCollection.insertOne({
-            amount: Number(amount), date, description
+        let addNewData = new AddExpense({
+            amount: req.query.amount,
+            description: req.query.description,
+            date: req.query.date,
+            userId: req.query.userId
         })
+        addNewData.id = addNewData._id.toString();
+        await expensesCollection.insertOne(addNewData)
         res.status(200).json({
             message: 'Add expense successfully!'
         });
@@ -160,6 +186,53 @@ routerUsers.post('/add-expense', async (req, res) => {
         res.send({error: error?.errmsg});
     }
 })
+
+routerUsers.put("/update-expense", async (req, res) => {
+    try {
+        const db = await dbConnect();
+        const expensesCollection = db.collection('expenses');
+
+        const setOfUpdateData = new UpdateExpenseSchema({
+            amount: req.query.amount,
+            description: req.query.description,
+            date: req.query.date
+        })
+
+        const updateData = { $set: setOfUpdateData };
+        await expensesCollection.findOneAndUpdate(
+            {
+                id: req.query?.id
+            }, // Find by ID
+                updateData, // Update fields
+            {
+                returnDocument: "after"
+            } // Return the updated document
+        );
+
+        res.json({
+            message: 'Successfully updated the data.'
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+routerUsers.delete("/delete-expense", async (req, res) => {
+    try {
+        const db = await dbConnect();
+        const expensesCollection = db.collection('expenses');
+
+        const { ids = [] } = req.query;
+
+        const result = await expensesCollection.deleteMany({ id: { $in: JSON.parse(ids) } });
+        
+        res.json({
+            message: 'Deleted data successfully.'
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = { routerUsers };
 

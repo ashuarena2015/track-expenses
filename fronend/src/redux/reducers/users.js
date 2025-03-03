@@ -52,10 +52,11 @@ const usersReducer = createSlice({
             state.isLoading = action.payload.loading
         },
         getExpenses: (state, action) => {
-            state.expenses =  modifyingExpenseInfo(action.payload.expenses);
+            state.expenses =  modifyingExpenseInfo(action.payload.expenses?.expenses);
+            state.expensesCount =  action.payload.expenses?.totalCount
+            state.totalExpenses = action.payload.expenses?.totalExpenses
         },
         getLoginDetails: (state, action) => {
-            console.log({getLoginDetails: action})
             state.loginUser = action.payload
         }
     }

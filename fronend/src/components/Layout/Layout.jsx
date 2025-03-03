@@ -20,13 +20,13 @@ const Layout = () => {
     }, []);
 
     return (
-        <div className="block bg-primary">
-        <div className="grid flex-column">
-            <Navigation />
-            <div className='p-4 m-auto'>
-                <Outlet />
+        <div className="block bg-primary" style={{ width: '1100px', margin: 'auto' }}>
+            <div className="grid flex-column">
+                <Navigation />
+                <div className='p-4 m-auto'>
+                    <Outlet />
+                </div>
             </div>
-        </div>
         </div>
     )
 
