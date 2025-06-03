@@ -13,7 +13,7 @@ export default function Navigation() {
     const tabSkeleton = <Skeleton width="5rem" />;
 
     const items = [
-        { label: isLoading ? tabSkeleton : 'Dashboard', icon: 'pi pi-objects-column', route: '/' },
+        { label: isLoading ? tabSkeleton : 'My Dashboard', icon: 'pi pi-objects-column', route: '/' },
         { label: isLoading ? tabSkeleton : 'Expenses', icon: 'pi pi-indian-rupee', route: '/expenses' },
         { label: isLoading ? tabSkeleton : 'Signup', icon: 'pi pi-user', route: 'signup', visible: !isLoading && !loginUser?.username }
     ];
